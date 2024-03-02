@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
 import { Button, Label, TextInput, Select } from 'flowbite-react';
 import axios from "axios";
 import { Alert } from 'flowbite-react';
-import { Transition } from '@headlessui/react';
+import React, { useState, useEffect } from "react";
+import { useNavigate, Route } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { GetwhoAmI } from "../../features/authSlice"; 
 
 const CreateProfile = () => {
     const [token, setToken] = useState("");
@@ -13,6 +15,19 @@ const CreateProfile = () => {
     const [selectedRole, setSelectedRole] = useState(""); // State untuk menyimpan role yang dipilih
     const [id_level, setId_Level] = useState(""); // State untuk menyimpan id_level
     const [showAlert, setShowAlert] = useState(false); // State untuk menunjukkan apakah alert harus ditampilkan
+    const dispatch = useDispatch()
+    const navigate = useNavigate();
+    const { isError } = useSelector((state) => state.auth);
+
+    useEffect(() => {
+        dispatch(GetwhoAmI())
+    }, [dispatch]);
+
+    useEffect(() =>{
+        if (isError) {
+            navigate('/login');
+        }
+    }, [isError, navigate]);
 
     useEffect(() => {
         tokenization();

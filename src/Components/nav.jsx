@@ -2,18 +2,20 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Avatar, Dropdown} from 'flowbite-react';
+import { Logout, reset } from "../features/authSlice.js";
+import { useDispatch, useSelector } from "react-redux";
 
 const Nav = ({ username, email }) => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const Logout = async () => {
-        try {
-            await axios.delete("http://localhost:5000/logout")
-            navigate("/login");
-        } catch (error) {
-            console.log(error);
-        }
-    }
+    const { user } = useSelector((state) => state.auth);
+
+    const logout = () => {
+        dispatch(Logout());
+        dispatch(reset());
+        navigate("/login");
+    };
 
     return (
         <>
@@ -45,7 +47,7 @@ const Nav = ({ username, email }) => {
                                         <span className="block truncate text-sm font-medium pt-1">{email}</span>
                                     </Dropdown.Header>
                                     <Dropdown.Divider />
-                                    <Dropdown.Item onClick={Logout}>Sign out</Dropdown.Item>
+                                    <Dropdown.Item onClick={logout}>Sign out</Dropdown.Item>
                                 </Dropdown>
                             </div>
                         </div>

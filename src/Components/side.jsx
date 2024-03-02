@@ -24,10 +24,13 @@ export const getRoleIdLevel = (id_level) => {
     }
 };
 
-export default function Sidebars({ id_level }) {
+export default function Sidebars({ id_level, id_user }) {
     const [isCTACollapsed, setCTACollapsed] = useState(false);
 
-    const role = getRoleIdLevel(id_level);
+    let role = 'rendering';
+    if (id_level) {
+        role = getRoleIdLevel(id_level);
+    }
     console.log(role);
 
     const toggleCTA = () => {
@@ -37,7 +40,7 @@ export default function Sidebars({ id_level }) {
     return (
         // Sidebar
         <>
-            <Sidebar id="logo-sidebar" className="sticky top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full bg- border-r border-gray-200 sm:translate-x-0" aria-label="Sidebar">
+            <Sidebar id_user={id_user} id="logo-sidebar" className="sticky top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full bg- border-r border-gray-200 sm:translate-x-0" aria-label="Sidebar">
                 <div className="h-full px-3 pb-4 overflow-y-auto ">
                     <Sidebar.Items>
                         <Sidebar.ItemGroup>
@@ -58,7 +61,7 @@ export default function Sidebars({ id_level }) {
                                     <Sidebar.Item as={Link} to={"/leaveApplication"}>Leave Application</Sidebar.Item>
                                 )}
                                 {(role === 'admin' || role === 'Kadet Mahasiswa') && (
-                                    <Sidebar.Item as={Link} to={"/sicknessPermit"}>Sickness Permit</Sidebar.Item>
+                                    <Sidebar.Item as={Link} to={`/sicknessPermit/${id_user}`}>Sickness Permit</Sidebar.Item>
                                 )}
                             </Sidebar.Collapse>
                             {role === 'admin' && (

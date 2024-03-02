@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
 import Nav from "../Components/nav";
 import Sidebars from "../Components/side";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { useNavigate, Route } from "react-router-dom";
 import ProtectedRoutes from "../context/ProtectedRoutes";
+import React, { useState, useEffect } from "react";
+import { useNavigate, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { GetwhoAmI } from "../features/authSlice"; 
 
@@ -15,29 +15,39 @@ const Dashboard = () => {
     const [expire, setExpire] = useState("");
     const [email, setEmail] = useState("");
     const [id_level, setId_level] = useState("");
+    const [id_user, setId_user] = useState("");
     const navigate = useNavigate();
     const { isError } = useSelector((state) => state.auth);
 
-
     useEffect(() => {
-        refreshToken();
-    }, []);
+        dispatch(GetwhoAmI())
+            .unwrap()
+            .then((decoded) => { // Now 'decoded' is the decoded token data
+                setUsername(decoded.username); // Update username state
+                setEmail(decoded.email); // Update email state
+                setToken(decoded.accessToken); // Update token state
+                setExpire(decoded.exp); // Update expire state
+                setId_level(decoded.id_level); // Update id_level state
+                setId_user(decoded.id_user); // Update id_user state
+            })
+            .catch((error) => {
+                console.error("Error fetching user data:", error);
+                if (isError) {
+                    navigate('/login');
+                }
+            });
+    }, [dispatch, navigate, isError]);
 
-    const refreshToken = async () => {
-        try {
-            const response = await axios.get("http://localhost:5000/refreshToken");
-            const decoded = jwtDecode(response.data.accessToken);
-            setToken(response.data.accessToken);
-            setUsername(decoded.username);
-            setEmail(decoded.email);
-            setId_level(decoded.id_level);
-            setExpire(decoded.exp);
-        } catch (error) {
-            if (error.response) {
-                navigate("/login");
-            }
-        }
-    };
+
+    // useEffect(() => {
+    //     dispatch(GetwhoAmI())
+    // }, [dispatch]);
+
+    // useEffect(() =>{
+    //     if (isError) {
+    //         navigate('/login');
+    //     }
+    // }, [isError, navigate]);
 
 
     return (
@@ -45,9 +55,9 @@ const Dashboard = () => {
             <div className="h-screen flex flex-col overflow-hidden">
                 <Nav {...{ username, email }} />
                 <div className="flex flex-1 overflow-hidden">
-                    <Sidebars className="flex-shrink-0 overflow-hidden" {...{ id_level }} />
+                    <Sidebars className="flex-shrink-0 overflow-hidden" {...{ id_level,  id_user}} />
                     <div className="flex-1 overflow-y-auto">
-                        <ProtectedRoutes {...{ token, id_level }} /> {/* Pass token as prop */}
+                        <ProtectedRoutes {...{ token, id_level, id_user }} /> {/* Pass token as prop */}
                     </div>
                 </div>
             </div>

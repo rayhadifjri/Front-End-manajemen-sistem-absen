@@ -3,12 +3,13 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import Home from '../landingPages/pages/homeBoard';
 import Presence from '../landingPages/pages/presencesCadet';
 import ExternalApplication from '../landingPages/pages/ExternalApplications';
-import AttendanceforExternal from '../landingPages/pages/AttendanceforExternals';
+import AttendanceforExternal from '../landingPages/pages/attendanceforExternals';
 import LeaveApplication from '../landingPages/pages/LeaveApplications';
-import SicknessPermit from '../landingPages/pages/SicknessPermits';
+import SicknessPermit from '../landingPages/pages/sicknessPermits';
 import Help from '../landingPages/pages/Helps';
 import Listusers from '../landingPages/pages/listUsers';
 import CreateProfile from '../landingPages/pages/createProfile';
+import Notfound from '../landingPages/pages/404notfound';
 
 export const getRoleFromIdLevel = (id_level) => {
     // Misalkan peran admin memiliki id_level 1,
@@ -31,7 +32,7 @@ export const getRoleFromIdLevel = (id_level) => {
 };
 
 
-const ProtectedRoutes = ({ id_level}) => {
+const ProtectedRoutes = ({ id_level, id_user}) => {
 
 
 
@@ -48,7 +49,7 @@ const ProtectedRoutes = ({ id_level}) => {
                     <Route path='/externalApplication' element={<ExternalApplication />} />
                     <Route path='/attendanceforExternal' element={<AttendanceforExternal />} />
                     <Route path='/leaveApplication' element={<LeaveApplication />} />
-                    <Route path='/sicknessPermit' element={<SicknessPermit />} />
+                    <Route path='/sicknessPermit/:id_user' element={<SicknessPermit id_user={id_user} />} />
                     <Route path='/listUsers' element={<Listusers />} />
                     <Route path='/createProfile' element={<CreateProfile />} />
                     <Route path='/help' element={<Help />} />
@@ -87,10 +88,11 @@ const ProtectedRoutes = ({ id_level}) => {
                     <Route path='/externalApplication' element={<ExternalApplication />} />
                     <Route path='/attendanceforExternal' element={<AttendanceforExternal />} />
                     <Route path='/leaveApplication' element={<LeaveApplication />} />
-                    <Route path='/sicknessPermit' element={<SicknessPermit />} />
+                    <Route path="/sicknessPermit/:id_user" element={<SicknessPermit id_user={id_user} />} />
                     <Route path='/help' element={<Help />} />
                 </>
             )}
+            <Route path="*" element={<Notfound />} />
         </Routes>
     );
 }

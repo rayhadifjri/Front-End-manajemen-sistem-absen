@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const initialState = {
     user: null,
@@ -9,7 +10,7 @@ const initialState = {
     message: ""
 }
 
-export const LoginUser = createAsyncThunk("user/LoginUser", async(user, thunkAPI) => {
+export const LoginUser = createAsyncThunk("user/LoginUser", async (user, thunkAPI) => {
     try {
         const response = await axios.post('http://localhost:5000/login', {
             username: user.username,
@@ -17,36 +18,31 @@ export const LoginUser = createAsyncThunk("user/LoginUser", async(user, thunkAPI
         })
         return response.data
     } catch (error) {
-        if(error.response){
+        if (error.response) {
             const message = error.response.data.msg
             return thunkAPI.rejectWithValue(message)
         }
     }
 });
 
-export const GetwhoAmI = createAsyncThunk("user/GetwhoAmI", async(_, thunkAPI) => {
+export const GetwhoAmI = createAsyncThunk("user/GetwhoAmI", async (_, thunkAPI) => {
     try {
-        const accessToken = response.data.accessToken; // Mengambil token dari response
-        if (!accessToken) {
-            return thunkAPI.rejectWithValue("Token tidak tersedia");
-        }
-        
-        const response = await axios.get('http://localhost:5000/me', {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+        const response = await axios.get("http://localhost:5000/refreshToken");
+        const decoded = jwtDecode(response.data.accessToken || ''); // Use an empty string if the token is not defined
+        response.data = decoded; // Set response.data to the decoded token data
+        console.log(response.data); // Now response.data is the decoded token data
         return response.data;
     } catch (error) {
-        if(error.response){
-            const message = error.response.data.msg || error.response.data.error;
+        if (error.response) {
+            const message = error.response.data.msg
             return thunkAPI.rejectWithValue(message);
         }
         return thunkAPI.rejectWithValue("Terjadi kesalahan saat melakukan permintaan");
     }
 });
 
-export const Logout = createAsyncThunk("user/Logout", async() => {
+
+export const Logout = createAsyncThunk("user/Logout", async () => {
     await axios.delete('http://localhost:5000/logout')
 });
 
@@ -85,7 +81,8 @@ export const authSlice = createSlice({
             state.isError = true;
             state.message = action.payload;
         });
-}});
+    }
+});
 
 export const { reset } = authSlice.actions;
 export default authSlice.reducer;

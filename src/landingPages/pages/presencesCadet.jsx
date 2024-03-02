@@ -1,5 +1,8 @@
 import { Table, Modal, Button, Label, TextInput, Alert, Select } from 'flowbite-react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { useNavigate, Route } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { GetwhoAmI } from "../../features/authSlice"; 
 import axios from 'axios';
 import { Dropdown } from 'flowbite-react';
 import { HiOutlineExclamationCircle, HiOutlineArrowRight } from 'react-icons/hi';
@@ -7,6 +10,19 @@ import { HiOutlineExclamationCircle, HiOutlineArrowRight } from 'react-icons/hi'
 const Presence = () => {
     const [token, setToken] = useState("");
     const [users, setUsers] = useState([])
+    const dispatch = useDispatch()
+    const navigate = useNavigate();
+    const { isError } = useSelector((state) => state.auth);
+
+    useEffect(() => {
+        dispatch(GetwhoAmI())
+    }, [dispatch]);
+
+    useEffect(() =>{
+        if (isError) {
+            navigate('/login');
+        }
+    }, [isError, navigate]);
 
     useEffect(() => {
         tokenization(); // Panggil fungsi tokenization saat komponen dimuat
