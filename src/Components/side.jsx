@@ -40,7 +40,7 @@ export default function Sidebars({ id_level, id_user }) {
     return (
         // Sidebar
         <>
-            <Sidebar id_user={id_user} id="logo-sidebar" className="sticky top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full bg- border-r border-gray-200 sm:translate-x-0" aria-label="Sidebar">
+            <Sidebar id_user={id_user} id="logo-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full bg- border-r border-gray-200 sm:translate-x-0 mt-14 pt-2" aria-label="Sidebar">
                 <div className="h-full px-3 pb-4 overflow-y-auto ">
                     <Sidebar.Items>
                         <Sidebar.ItemGroup>
@@ -52,13 +52,13 @@ export default function Sidebars({ id_level, id_user }) {
                                     <Sidebar.Item as={Link} to={"/presenceCadet"}>Presence</Sidebar.Item>
                                 )}
                                 {(role === 'admin' || role === 'Karo AK' || role === 'Dekan' || role === 'Kaprodi' || role === 'Kadet Mahasiswa') && (
-                                    <Sidebar.Item as={Link} to={"/externalApplication"}>External Application</Sidebar.Item>
+                                    <Sidebar.Item as={Link} to={`/externalApplication/${id_user}`}>External Application</Sidebar.Item>
                                 )}
                                 {(role === 'admin' || role === 'Kadet Mahasiswa') && (
                                     <Sidebar.Item as={Link} to={"/attendanceforExternal"}>External's Presence</Sidebar.Item>
                                 )}
                                 {(role === 'admin' || role === 'Karo AK' || role === 'Dekan' || role === 'Kaprodi' || role === 'Kadet Mahasiswa') && (
-                                    <Sidebar.Item as={Link} to={"/leaveApplication"}>Leave Application</Sidebar.Item>
+                                    <Sidebar.Item as={Link} to={`/leaveApplication/${id_user}`}>Leave Application</Sidebar.Item>
                                 )}
                                 {(role === 'admin' || role === 'Kadet Mahasiswa') && (
                                     <Sidebar.Item as={Link} to={`/sicknessPermit/${id_user}`}>Sickness Permit</Sidebar.Item>

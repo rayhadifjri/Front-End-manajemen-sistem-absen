@@ -46,9 +46,9 @@ const ProtectedRoutes = ({ id_level, id_user}) => {
             {role === 'admin' && (
                 <>
                     <Route path='/presenceCadet' element={<Presence/>} />
-                    <Route path='/externalApplication' element={<ExternalApplication />} />
+                    <Route path='/externalApplication/:id_user' element={<ExternalApplication id_user={id_user} />} />
                     <Route path='/attendanceforExternal' element={<AttendanceforExternal />} />
-                    <Route path='/leaveApplication' element={<LeaveApplication />} />
+                    <Route path='/leaveApplication/:id_user' element={<LeaveApplication id_user={id_user} />} />
                     <Route path='/sicknessPermit/:id_user' element={<SicknessPermit id_user={id_user} />} />
                     <Route path='/listUsers' element={<Listusers />} />
                     <Route path='/createProfile' element={<CreateProfile />} />
@@ -58,22 +58,22 @@ const ProtectedRoutes = ({ id_level, id_user}) => {
             )}
             {role === 'Karo AK' && (
                 <>
-                    <Route path='/externalApplication' element={<ExternalApplication />} />
-                    <Route path='/leaveApplication' element={<LeaveApplication />} />
+                    <Route path='/externalApplication/:id_user' element={<ExternalApplication id_user={id_user} />} />
+                    <Route path='/leaveApplication/:id_user' element={<LeaveApplication id_user={id_user} />} />
                     <Route path='/help' element={<Help />} />
                 </>
             )}
             {role === 'Dekan' && (
                 <>
-                    <Route path='/externalApplication' element={<ExternalApplication />} />
-                    <Route path='/leaveApplication' element={<LeaveApplication />} />
+                    <Route path='/externalApplication/:id_user' element={<ExternalApplication id_user={id_user} />} />
+                    <Route path='/leaveApplication/:id_user' element={<LeaveApplication id_user={id_user} />} />
                     <Route path='/help' element={<Help />} />
                 </>
             )}
             {role === 'Kaprodi' && (
                 <>
-                    <Route path='/externalApplication' element={<ExternalApplication />} />
-                    <Route path='/leaveApplication' element={<LeaveApplication />} />
+                    <Route path='/externalApplication/:id_user' element={<ExternalApplication id_user={id_user} />} />
+                    <Route path='/leaveApplication/:id_user' element={<LeaveApplication id_user={id_user} />} />
                     <Route path='/help' element={<Help />} />
                 </>
             )}
@@ -85,9 +85,9 @@ const ProtectedRoutes = ({ id_level, id_user}) => {
             )}
             {role === 'Kadet Mahasiswa' && (
                 <>
-                    <Route path='/externalApplication' element={<ExternalApplication />} />
+                    <Route path='/externalApplication/:id_user' element={<ExternalApplication id_user={id_user} />} />
                     <Route path='/attendanceforExternal' element={<AttendanceforExternal />} />
-                    <Route path='/leaveApplication' element={<LeaveApplication />} />
+                    <Route path='/leaveApplication/:id_user' element={<LeaveApplication id_user={id_user} />} />
                     <Route path="/sicknessPermit/:id_user" element={<SicknessPermit id_user={id_user} />} />
                     <Route path='/help' element={<Help />} />
                 </>

@@ -6,7 +6,7 @@ import ProtectedRoutes from "../context/ProtectedRoutes";
 import React, { useState, useEffect } from "react";
 import { useNavigate, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { GetwhoAmI } from "../features/authSlice"; 
+import { GetwhoAmI } from "../features/authSlice";
 
 const Dashboard = () => {
     const dispatch = useDispatch()
@@ -52,17 +52,17 @@ const Dashboard = () => {
 
     return (
         <>
-            <div className="h-screen flex flex-col overflow-hidden">
-                <Nav {...{ username, email }} />
+            <div className="flex flex-col overflow-hidden">
+                <Nav className="flex-grow-0" {...{ username, email }} />
                 <div className="flex flex-1 overflow-hidden">
-                    <Sidebars className="flex-shrink-0 overflow-hidden" {...{ id_level,  id_user}} />
-                    <div className="flex-1 overflow-y-auto">
-                        <ProtectedRoutes {...{ token, id_level, id_user }} /> {/* Pass token as prop */}
+                    <Sidebars className="min-w-0 flex-shrink-0 overflow-hidden" {...{ id_level, id_user }} />
+                    <div className="flex-1 overflow-y-auto md:ml-64 sm:ml-0">
+                        <ProtectedRoutes className="flex-1" {...{ token, id_level, id_user }} /> {/* Pass token as prop */}
                     </div>
                 </div>
             </div>
         </>
-    )
+    );
 }
 
 export default Dashboard;
