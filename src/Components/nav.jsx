@@ -38,8 +38,6 @@ const Nav = ({ username, email }) => {
                                     inline
                                     label={
                                         <Avatar alt="User settings" className="border rounded-full border-slate-400 p-0.5" img="https://flowbite.com/docs/images/people/profile-picture-5.jpg" rounded />
-                                        // <Avatar alt="User settings" className="border rounded-full border-slate-400 p-0.5" img="/logo.png" rounded />
-                                        // <img src="./logo.png" width="100"></img>
                                     }
                                 >
                                     <Dropdown.Header>

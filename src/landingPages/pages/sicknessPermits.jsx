@@ -13,8 +13,10 @@ const SicknessPermit = ({ id_user, id_ijinkhusus }) => {
     const [id_level, setId_level] = useState("");
     const [ijinList, setIjinList] = useState([]);
     const navigate = useNavigate();
-    const { user, isError } = useSelector((state) => state.auth);
+    const { isError } = useSelector((state) => state.auth);
     const [loading, setLoading] = useState(true); // Tambahkan variabel loading
+    const [showForm, setShowForm] = useState(true);
+    const [showBanner, setShowBanner] = useState(false);
 
     useEffect(() => {
         dispatch(GetwhoAmI())
@@ -28,7 +30,7 @@ const SicknessPermit = ({ id_user, id_ijinkhusus }) => {
     }, [dispatch, isError]);
 
     const [formValues, setFormValues] = useState({
-        id_ketijin: 1, // Set to a valid default value
+        id_ketijin: 0, // Set to a valid default value
         tanggal_mulai: '',
         tanggal_selesai: '',
         deskripsi: '',
@@ -37,7 +39,7 @@ const SicknessPermit = ({ id_user, id_ijinkhusus }) => {
     });
 
     useEffect(() => {
-        if (formValues.id_ketijin === 1) {
+        if (formValues.id_ketijin === 0) {
             const fetchIjinList = async () => {
                 try {
                     const data = await getijinbyidketijin(formValues.id_ketijin);
@@ -93,24 +95,35 @@ const SicknessPermit = ({ id_user, id_ijinkhusus }) => {
             // Update ijinList with new data
             const data = await getijinbyidketijin(formValues.id_ketijin);
             setIjinList([...ijinList, data || []]); // Initialize data as empty array if it's undefined
+            setShowForm(false)
+            setShowBanner(true);
 
-            // Reset form values after successful submission
-            // setFormValues({
-            //     id_ketijin: 1,
-            //     tanggal_mulai: '',
-            //     tanggal_selesai: '',
-            //     deskripsi: '',
-            //     status_ijin: 1,
-            //     files: null
-            // });
         } catch (error) {
             console.error(error); // Handle error
         }
     };
 
-    const getijinbyidketijin = async (id_ketijin) => {
+    const getijinbyidketijin = async (id_ijinkhusus) => {
         try {
-            const response = await axios.get(`http://localhost:5000/getijinbyidketijin/${id_ketijin}`)
+            const response = await axios.get(`http://localhost:5000/getijinbyidketijin/${id_ijinkhusus}`)
+            return response.data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const approvedIjinSakit = async (id_ijinkhusus) => {
+        try {
+            const response = await axios.patch(`http://localhost:5000/approvedIjinSakit/${id_ijinkhusus}`)
+            return response.data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const deleteIjin = async (id_ketijin) => {
+        try {
+            const response = await axios.patch(`http://localhost:5000/deleteijin/${id_ketijin}`)
             return response.data;
         } catch (error) {
             console.error(error);
@@ -128,12 +141,12 @@ const SicknessPermit = ({ id_user, id_ijinkhusus }) => {
             {id_level === 6 && (
                 <section className="max-w p-6 mx-auto dark:bg-gray-800">
                     <h1 className="text-2xl font-bold text-gray-700 capitalize dark:text-white">Perizinan Sakit</h1>
-                    {submitted && (
+                    {showBanner && (
                         <Banner>
                             <div className="flex mt-5 w-full flex-col justify-between border-b border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700 md:flex-row">
                                 <div className="mb-4 md:mb-0 md:mr-4">
                                     <h2 className="mb-1 text-base font-semibold text-gray-900 dark:text-white">
-                                        {formValues.id_ketijin === 1 ? 'Sakit' : ''}
+                                        {formValues.id_ketijin === 0 ? 'Sakit' : ''}
                                     </h2>
                                     <p className="flex items-center text-sm font-normal text-gray-500 dark:text-gray-400">
                                         {formValues.deskripsi}
@@ -144,16 +157,16 @@ const SicknessPermit = ({ id_user, id_ijinkhusus }) => {
                                         href="#"
                                         className="mr-2 inline-flex items-center justify-center rounded-lg bg-cyan-700 px-3 py-2 text-xs font-medium text-white hover:bg-cyan-800 focus:outline-none focus:ring-4 focus:ring-cyan-300 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800"
                                     >
-                                        {formValues.status_ijin === 1 ? 'Kadet Mahasiswa' : ''}
+                                        {formValues.status_ijin === 1 ? 'Pending on Admin' : ''}
                                     </a>
-                                    <Banner.CollapseButton onClick={handleDelete} color="gray" className="border-0 bg-transparent text-gray-500 dark:text-gray-400">
+                                    <Banner.CollapseButton color="gray" className="border-0 bg-transparent text-gray-500 dark:text-gray-400">
                                         <HiX className="h-4 w-4" />
                                     </Banner.CollapseButton>
                                 </div>
                             </div>
                         </Banner>
                     )}
-                    {formVisible && (
+                    {showForm && (
                         <form onSubmit={handleSubmit}>
                             <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
                                 <div>
@@ -166,7 +179,7 @@ const SicknessPermit = ({ id_user, id_ijinkhusus }) => {
                                         onChange={handleInputChange}
                                         className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
                                     >
-                                        <option value="1">Sakit</option>
+                                        <option value="0">Sakit</option>
                                     </select>
                                 </div>
 
@@ -304,55 +317,49 @@ const SicknessPermit = ({ id_user, id_ijinkhusus }) => {
                                             {ijin.status_ijin === 1 ? 'Menunggu Admin' : ijin.status_ijin === 0 ? 'Ditolak' : ijin.status_ijin === 5 ? 'Diterima' : ''}
                                         </Table.Cell>
                                         <Table.Cell className="flex">
-                                                <>
-                                                    <div
-                                                        className="bg-gray-100 px-2.5 mx-2 rounded-lg shadow-md inline-block cursor-pointer"
-                                                        onClick={() => handleApprove(ijin.id_ijinkhusus)}
+                                            <>
+                                                <div
+                                                    className="bg-gray-100 px-2.5 mx-2 rounded-lg shadow-md inline-block cursor-pointer"
+                                                    onClick={() => approvedIjinSakit(ijin.id_ijinkhusus)} // asumsikan `ijin` adalah objek yang memiliki properti `id_ketijin`
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        width="24"
+                                                        height="24"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        className="lucide lucide-check"
+                                                        color="green"
                                                     >
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            width="24"
-                                                            height="24"
-                                                            viewBox="0 0 24 24"
-                                                            fill="none"
-                                                            stroke="currentColor"
-                                                            strokeWidth="2"
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            className="lucide lucide-check"
-                                                            color="green"
-                                                        >
-                                                            <path d="M20 6 9 17l-5-5" />
-                                                        </svg>
-                                                    </div>
-                                                    <div
-                                                        className="bg-gray-100 px-2.5 rounded-lg mx-2 shadow-md inline-block cursor-pointer"
-                                                        onClick={() => handleReject(ijin.id_ijinkhusus)}
-                                                    >
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            width="24"
-                                                            height="24"
-                                                            viewBox="0 0 24 24"
-                                                            fill="none"
-                                                            stroke="currentColor"
-                                                            strokeWidth="2"
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            className="lucide lucide-x"
-                                                            color="red"
-                                                        >
-                                                            <path d="M18 6 6 18" />
-                                                            <path d="m6 6 12 12" />
-                                                        </svg>
-                                                    </div>
-                                                </>
-                                                <div className="mx-2">
-                                                    <span
-                                                        className="bg-gray-100 px-2.5 rounded-lg shadow-md inline-block cursor-pointer"
-                                                    > coba
-                                                    </span>
+                                                        <path d="M20 6 9 17l-5-5" />
+                                                    </svg>
                                                 </div>
+                                                <div
+                                                    className="bg-gray-100 px-2.5 rounded-lg mx-2 shadow-md inline-block cursor-pointer"
+                                                    onClick={() => deleteIjin(ijin.id_ijinkhusus)}
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        width="24"
+                                                        height="24"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        className="lucide lucide-x"
+                                                        color="red"
+                                                    >
+                                                        <path d="M18 6 6 18" />
+                                                        <path d="m6 6 12 12" />
+                                                    </svg>
+                                                </div>
+                                            </>
                                         </Table.Cell>
                                     </Table.Row>
                                 ))

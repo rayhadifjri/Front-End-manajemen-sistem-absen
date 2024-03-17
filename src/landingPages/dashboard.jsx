@@ -39,17 +39,6 @@ const Dashboard = () => {
     }, [dispatch, navigate, isError]);
 
 
-    // useEffect(() => {
-    //     dispatch(GetwhoAmI())
-    // }, [dispatch]);
-
-    // useEffect(() =>{
-    //     if (isError) {
-    //         navigate('/login');
-    //     }
-    // }, [isError, navigate]);
-
-
     return (
         <>
             <div className="flex flex-col overflow-hidden">
