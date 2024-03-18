@@ -14,8 +14,6 @@ const Presence = () => {
     const [prodiData, setProdiData] = useState([]);
     const [selectedAngkatan, setSelectedAngkatan] = useState('');
     const [angkatanData, setAngkatanData] = useState([]);
-    const [prodi, setProdi] = useState('');
-    const [angkatan, setAngkatan] = useState('');
     const [angkatanDetails, setAngkatanDetails] = useState([]);
 
     const dispatch = useDispatch();
@@ -67,29 +65,27 @@ const Presence = () => {
         }
     };
 
-    const getUserbyProdiandAngkatan = async (id_prodi, id_angkatan) => {
+    const getUserbyProdiandAngkatan = async (id_prodi, id_ketangkatan) => {
         try {
-            const response = await axiosJWT.get(`http://localhost:5000/getUserbyProdiandAngkatan`, {
-                id_prodi,
-                id_angkatan
+            const response = await axios.get(`http://localhost:5000/getUserbyProdiandAngkatan`, {
+                params: {
+                    id_prodi,
+                    id_ketangkatan
+                }
             });
-            return response.data;
-        } catch (error) {
-            console.log("Failed to fetch user by prodi and angkatan: ", error);
-        }
-    }
 
-    // Fungsi untuk menangani klik tombol
-    const handleButtonClick = async () => {
-        try {
-            if (selectedProdi && selectedAngkatan) {
-                const userData = await getUserbyProdiandAngkatan(selectedProdi, selectedAngkatan);
-                console.log(userData); // Anda dapat menangani data pengguna sesuai kebutuhan
-            } else {
-                console.log("Silakan pilih prodi dan angkatan terlebih dahulu.");
-            }
+            const transformedData = response.data.map(entry => ({
+                id_user: entry.id_user,
+                username: entry.user.username,
+                email: entry.user.email,
+                nama_prodi: entry.prodi.nama_prodi,
+                nama_angkatan: entry.ketangkatan.nama_angkatan
+            }));
+
+            setAngkatanDetails(transformedData);
+            console.log(response.data);
         } catch (error) {
-            console.log("Gagal mengambil data pengguna: ", error);
+            console.log("Gagal mengambil data pengguna berdasarkan prodi dan angkatan: ", error);
         }
     };
 
@@ -122,7 +118,7 @@ const Presence = () => {
                     <div className="mb-2 block">
                         <Label htmlFor="btn" value="Kirim" />
                     </div>
-                    <Button className='' id='btn_search' onClick={handleButtonClick}>
+                    <Button className='' id='btn_search' onClick={() => getUserbyProdiandAngkatan(selectedProdi, selectedAngkatan)}>
                         <HiOutlineArrowRight className="h-5 w-5" />
                     </Button>
                 </div>
@@ -142,17 +138,20 @@ const Presence = () => {
                     </Table.Head>
                     <Table.Body className="">
                         {Array.isArray(angkatanDetails) && angkatanDetails.length > 0 ? (
-                            angkatanDetails.map((angkatanDetail, index) => (
-                                <Table.Row key={angkatanDetail.id_user} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                                    <Table.Cell>{index + 1}</Table.Cell>
-                                    <Table.Cell>{angkatanDetail.user.username}</Table.Cell>
-                                    <Table.Cell>{angkatanDetail.user.email}</Table.Cell>
-                                    <Table.Cell>{angkatanDetail.prodi.nama_prodi}</Table.Cell>
-                                    <Table.Cell>
-                                        <input type="checkbox" />
-                                    </Table.Cell>
-                                </Table.Row>
-                            ))
+                            angkatanDetails
+                                .slice() // Buat salinan array agar tidak mempengaruhi array asli
+                                .sort((a, b) => a.username.localeCompare(b.username)) // Urutkan berdasarkan nama
+                                .map((angkatanDetail, index) => (
+                                    <Table.Row key={angkatanDetail.id_user} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                                        <Table.Cell>{index + 1}</Table.Cell>
+                                        <Table.Cell>{angkatanDetail.username}</Table.Cell>
+                                        <Table.Cell>{angkatanDetail.email}</Table.Cell>
+                                        <Table.Cell>{angkatanDetail.nama_prodi}</Table.Cell>
+                                        <Table.Cell>
+                                            <input type="checkbox" />
+                                        </Table.Cell>
+                                    </Table.Row>
+                                ))
                         ) : (
                             <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                 <Table.Cell>No data available</Table.Cell>
@@ -161,26 +160,6 @@ const Presence = () => {
                     </Table.Body>
                 </Table>
             </div>
-
-            {/* Tambahkan pengecekan untuk angkatanDetails */}
-            {Array.isArray(angkatanDetails) && angkatanDetails.length > 0 ? (
-                <div className="flex max-w-none justify-end mt-5">
-                    <div className="p-4 text-right justify-end">
-                        <Select className='justify-end' id="ddl_angkatan" required onChange={e => setAngkatan(e.target.value)}>
-                            <option selected disabled>Pilih jadwal harian</option>
-                            <option value="1">Harian 1</option>
-                            <option value="2">Harian 2</option>
-                            <option value="3">Harian 3</option>
-                        </Select>
-                        <button
-                            type="submit"
-                            className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-gray-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
-                        >
-                            Submit Kehadiran
-                        </button>
-                    </div>
-                </div>
-            ) : null}
         </>
     )
 }

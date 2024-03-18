@@ -3,7 +3,6 @@ import Login from './landingPages/login'
 import ProtectedRoutes from './context/ProtectedRoutes'
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { jwtDecode } from 'jwt-decode'
 
 const App = () => {
 
