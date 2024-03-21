@@ -79,7 +79,7 @@ const ProtectedRoutes = ({ id_level, id_user}) => {
             )}
             {role === 'Dosen' && (
                 <>
-                    <Route path='/presence' element={<Presence />} />
+                    <Route path='/presenceCadet' element={<Presence />} />
                     <Route path='/help' element={<Help />} />
                 </>
             )}

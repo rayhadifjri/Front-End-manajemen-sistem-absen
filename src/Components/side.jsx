@@ -1,7 +1,7 @@
 import { Sidebar, Badge } from 'flowbite-react';
 import { BiBuoy } from 'react-icons/bi';
 import { HiArrowSmRight, HiChartPie, HiShoppingBag, HiTable } from 'react-icons/hi';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 
 export const getRoleIdLevel = (id_level) => {

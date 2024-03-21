@@ -17,6 +17,7 @@ const SicknessPermit = ({ id_user, id_ijinkhusus }) => {
     const [loading, setLoading] = useState(true); // Tambahkan variabel loading
     const [showForm, setShowForm] = useState(true);
     const [showBanner, setShowBanner] = useState(false);
+    const [statusIjin, setStatusIjin] = useState([]);
 
     useEffect(() => {
         dispatch(GetwhoAmI())
@@ -38,12 +39,20 @@ const SicknessPermit = ({ id_user, id_ijinkhusus }) => {
         files: null
     });
 
+
     useEffect(() => {
         if (formValues.id_ketijin === 0) {
             const fetchIjinList = async () => {
                 try {
                     const data = await getijinbyidketijin(formValues.id_ketijin);
                     setIjinList(data || []);
+                    const statusIjinArray = data.map((item) => {
+                        return {
+                            status_ijin: item.status_ijin,
+                            id_ijinkhusus: item.id_ijinkhusus
+                        };
+                    });
+                    setStatusIjin(statusIjinArray);
                     setLoading(false); // Set loading to false after data is fetched
                 } catch (error) {
                     console.error("Error fetching ijin list:", error);
@@ -115,20 +124,31 @@ const SicknessPermit = ({ id_user, id_ijinkhusus }) => {
     const approvedIjinSakit = async (id_ijinkhusus) => {
         try {
             const response = await axios.patch(`http://localhost:5000/approvedIjinSakit/${id_ijinkhusus}`)
+            updateStatusIjin(id_ijinkhusus, 5); // Update status_ijin to 5 (Diterima)
             return response.data;
         } catch (error) {
             console.error(error);
         }
     }
 
-    const deleteIjin = async (id_ketijin) => {
+    const deleteIjin = async (id_ijinkhusus) => {
         try {
-            const response = await axios.patch(`http://localhost:5000/deleteijin/${id_ketijin}`)
+            const response = await axios.patch(`http://localhost:5000/deleteijin/${id_ijinkhusus}`)
+            updateStatusIjin(id_ijinkhusus, 0); // Update status_ijin to 0 (Ditolak)
             return response.data;
         } catch (error) {
             console.error(error);
         }
     }
+
+    // Function to update status_ijin for a specific id_ijinkhusus
+    const updateStatusIjin = (id, newStatus) => {
+        const updatedStatusIjin = statusIjin.map(item =>
+            item.id_ijinkhusus === id ? { ...item, status_ijin: newStatus } : item
+        );
+
+        setStatusIjin(updatedStatusIjin);
+    };
 
     useEffect(() => {
         if (isError) {
@@ -314,53 +334,55 @@ const SicknessPermit = ({ id_user, id_ijinkhusus }) => {
                                             )}
                                         </Table.Cell>
                                         <Table.Cell>
-                                            {ijin.status_ijin === 1 ? 'Menunggu Admin' : ijin.status_ijin === 0 ? 'Ditolak' : ijin.status_ijin === 5 ? 'Diterima' : ''}
+                                            {statusIjin[index].status_ijin === 1 ? 'Menunggu Admin' : statusIjin[index].status_ijin === 0 ? 'Ditolak' : statusIjin[index].status_ijin === 5 ? 'Diterima' : ''}
                                         </Table.Cell>
-                                        <Table.Cell className="flex">
-                                            <>
-                                                <div
-                                                    className="bg-gray-100 px-2.5 mx-2 rounded-lg shadow-md inline-block cursor-pointer"
-                                                    onClick={() => approvedIjinSakit(ijin.id_ijinkhusus)} // asumsikan `ijin` adalah objek yang memiliki properti `id_ketijin`
-                                                >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        width="24"
-                                                        height="24"
-                                                        viewBox="0 0 24 24"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        strokeWidth="2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        className="lucide lucide-check"
-                                                        color="green"
+                                        {statusIjin[index].status_ijin === 1 ? (
+                                            <Table.Cell className="flex">
+                                                <>
+                                                    <div
+                                                        className="bg-gray-100 px-2.5 mx-2 rounded-lg shadow-md inline-block cursor-pointer"
+                                                        onClick={() => approvedIjinSakit(ijin.id_ijinkhusus)} // asumsikan `ijin` adalah objek yang memiliki properti `id_ketijin`
                                                     >
-                                                        <path d="M20 6 9 17l-5-5" />
-                                                    </svg>
-                                                </div>
-                                                <div
-                                                    className="bg-gray-100 px-2.5 rounded-lg mx-2 shadow-md inline-block cursor-pointer"
-                                                    onClick={() => deleteIjin(ijin.id_ijinkhusus)}
-                                                >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        width="24"
-                                                        height="24"
-                                                        viewBox="0 0 24 24"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        strokeWidth="2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        className="lucide lucide-x"
-                                                        color="red"
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="24"
+                                                            height="24"
+                                                            viewBox="0 0 24 24"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            strokeWidth="2"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            className="lucide lucide-check"
+                                                            color="green"
+                                                        >
+                                                            <path d="M20 6 9 17l-5-5" />
+                                                        </svg>
+                                                    </div>
+                                                    <div
+                                                        className="bg-gray-100 px-2.5 rounded-lg mx-2 shadow-md inline-block cursor-pointer"
+                                                        onClick={() => deleteIjin(ijin.id_ijinkhusus)}
                                                     >
-                                                        <path d="M18 6 6 18" />
-                                                        <path d="m6 6 12 12" />
-                                                    </svg>
-                                                </div>
-                                            </>
-                                        </Table.Cell>
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="24"
+                                                            height="24"
+                                                            viewBox="0 0 24 24"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            strokeWidth="2"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            className="lucide lucide-x"
+                                                            color="red"
+                                                        >
+                                                            <path d="M18 6 6 18" />
+                                                            <path d="m6 6 12 12" />
+                                                        </svg>
+                                                    </div>
+                                                </>
+                                            </Table.Cell>
+                                        ) : <Table.Cell className="flex"></Table.Cell>}
                                     </Table.Row>
                                 ))
                             )}

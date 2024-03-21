@@ -11,11 +11,6 @@ axios.defaults.withCredentials = true
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
-      {/* <BrowserRouter>
-        <Routes>
-          <Route path="/*" element={<App />} />
-        </Routes>
-      </BrowserRouter> */}
       <App />
     </Provider>
   </React.StrictMode>
