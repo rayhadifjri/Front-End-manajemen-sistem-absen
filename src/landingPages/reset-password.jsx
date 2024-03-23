@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Card, Checkbox, Label, TextInput } from 'flowbite-react';
+import { Button, Card, Label, TextInput } from 'flowbite-react';
 import { useDispatch, useSelector } from "react-redux";
 import NavbarComp from "../Components/navbar";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,6 +10,7 @@ const ResetPassword = () => {
     const navigate = useNavigate();
     const { id_user, token } = useParams();
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState(""); // Tambahkan state untuk konfirmasi password
     const dispatch = useDispatch();
 
     const { user, isError, isSuccess, isLoading, message } = useSelector(
@@ -25,6 +26,12 @@ const ResetPassword = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        // Validasi konfirmasi password
+        if (password !== confirmPassword) {
+            dispatch({ type: 'AUTH_ERROR', payload: 'Password and confirm password do not match.' });
+            return;
+        }
+
         axios.post(`http://localhost:5000/reset-password/${id_user}/${token}`, {
             password
         }).then(res => {
@@ -38,6 +45,7 @@ const ResetPassword = () => {
             console.log(err);
         });
     };
+
     return (
         <div>
             <NavbarComp />
@@ -49,15 +57,20 @@ const ResetPassword = () => {
                             <div className="mb-2 block">
                                 <Label htmlFor="password" value="Password" />
                             </div>
-                            <TextInput id="password" type="password" placeholder="password" required
-                                value={password} onChange={(e) =>
-                                    setPassword(e.target.value)
-                                }
-                            />
+                            <TextInput id="password" type="password" placeholder="Password" required
+                                value={password} onChange={(e) => setPassword(e.target.value)} />
                         </div>
-                        <Button type="submit">
-                            {isLoading ? 'Loading...' : 'New Password'}
-                        </Button>
+                        <div>
+                            <div className="mb-2 block">
+                                <Label htmlFor="confirmPassword" value="Confirm Password" />
+                            </div>
+                            <TextInput id="confirmPassword" type="password" placeholder="Confirm Password" required
+                                value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                        </div>
+                        {password !== confirmPassword && (
+                            <p className="text-xs text-red-700">Password and confirm password tidak sama</p>
+                        )}
+                        <Button type="submit">{isLoading ? 'Loading...' : 'New Password'}</Button>
                     </form>
                 </Card>
             </div>

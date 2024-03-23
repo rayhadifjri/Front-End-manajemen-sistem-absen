@@ -3,12 +3,14 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import Home from '../landingPages/pages/homeBoard';
 import Presence from '../landingPages/pages/presencesCadet';
 import ExternalApplication from '../landingPages/pages/ExternalApplications';
-import AttendanceforExternal from '../landingPages/pages/attendanceforExternals';
+import AttendanceforExternal from '../landingPages/pages/leaflet/attendanceforExternals';
 import LeaveApplication from '../landingPages/pages/LeaveApplications';
 import SicknessPermit from '../landingPages/pages/sicknessPermits';
+import AllPermitLists from '../landingPages/pages/allPermitLists';
 import Help from '../landingPages/pages/Helps';
 import Listusers from '../landingPages/pages/listUsers';
 import CreateProfile from '../landingPages/pages/createProfile';
+import PermitLists from '../landingPages/pages/permitLists';
 import Notfound from '../landingPages/pages/404notfound';
 
 export const getRoleFromIdLevel = (id_level) => {
@@ -37,7 +39,6 @@ const ProtectedRoutes = ({ id_level, id_user}) => {
 
 
     const role = getRoleFromIdLevel(id_level);
-    // console.log(role);
 
 
     return (
@@ -53,6 +54,7 @@ const ProtectedRoutes = ({ id_level, id_user}) => {
                     <Route path='/listUsers' element={<Listusers />} />
                     <Route path='/createProfile' element={<CreateProfile />} />
                     <Route path='/help' element={<Help />} />
+                    <Route path='/allPermitLists' element={<AllPermitLists />} />
                 </>
 
             )}
@@ -90,6 +92,7 @@ const ProtectedRoutes = ({ id_level, id_user}) => {
                     <Route path='/leaveApplication/:id_user' element={<LeaveApplication id_user={id_user} />} />
                     <Route path="/sicknessPermit/:id_user" element={<SicknessPermit id_user={id_user} />} />
                     <Route path='/help' element={<Help />} />
+                    <Route path='/permitLists/:id_user' element={<PermitLists id_user={id_user} />} />
                 </>
             )}
             <Route path="*" element={<Notfound />} />

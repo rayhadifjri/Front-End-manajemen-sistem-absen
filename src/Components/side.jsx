@@ -1,6 +1,9 @@
 import { Sidebar, Badge } from 'flowbite-react';
-import { BiBuoy } from 'react-icons/bi';
-import { HiArrowSmRight, HiChartPie, HiShoppingBag, HiTable } from 'react-icons/hi';
+import { BiHelpCircle } from "react-icons/bi";
+import { VscHome } from "react-icons/vsc";
+import { AiOutlinePicCenter } from "react-icons/ai";
+import { TbListSearch } from "react-icons/tb";
+import { HiArrowSmRight, HiTable } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 
@@ -31,7 +34,6 @@ export default function Sidebars({ id_level, id_user }) {
     if (id_level) {
         role = getRoleIdLevel(id_level);
     }
-    console.log(role);
 
     const toggleCTA = () => {
         setCTACollapsed(!isCTACollapsed);
@@ -44,10 +46,10 @@ export default function Sidebars({ id_level, id_user }) {
                 <div className="h-full px-3 pb-4 overflow-y-auto ">
                     <Sidebar.Items>
                         <Sidebar.ItemGroup>
-                            <Sidebar.Item className='cursor-auto' as={Link} to={"/"} icon={HiChartPie}>
+                            <Sidebar.Item className='cursor-auto' as={Link} to={"/"} icon={VscHome}>
                                 Home
                             </Sidebar.Item>
-                            <Sidebar.Collapse icon={HiShoppingBag} label="Presence Center">
+                            <Sidebar.Collapse icon={AiOutlinePicCenter} label="Presence Center">
                                 {(role === 'admin' || role === 'Dosen') && (
                                     <Sidebar.Item as={Link} to={"/presenceCadet"}>Presence</Sidebar.Item>
                                 )}
@@ -76,11 +78,21 @@ export default function Sidebars({ id_level, id_user }) {
                             )}
                         </Sidebar.ItemGroup>
                         <Sidebar.ItemGroup>
-                            <Sidebar.Item as={Link} to={"/help"} icon={BiBuoy}>
+                            <Sidebar.Item as={Link} to={"/help"} icon={BiHelpCircle}>
                                 Help
                             </Sidebar.Item>
+                            {(role === 'admin') && (
+                            <Sidebar.Item as={Link} to={`/allPermitLists`} icon={TbListSearch}>
+                                All Permit Lists
+                            </Sidebar.Item>
+                            )}
+                            {(role === 'Kadet Mahasiswa') && (
+                            <Sidebar.Item as={Link} to={`/permitLists/${id_user}`} icon={TbListSearch}>
+                                Permit Lists
+                            </Sidebar.Item>
+                            )}
                         </Sidebar.ItemGroup>
-                        <Sidebar.CTA>
+                        <Sidebar.CTA className={`${isCTACollapsed ? 'hidden' : ''}`}>
                             <div className="mb-3 flex items-center">
                                 <Badge color="warning">Beta</Badge>
                                 <button
@@ -104,12 +116,12 @@ export default function Sidebars({ id_level, id_user }) {
                                     </svg>
                                 </button>
                             </div>
-                            <div className={`mb-3 text-sm ${isCTACollapsed ? 'hidden' : ''} text-cyan-900 dark:text-gray-400`}>
+                            <div className={`mb-3 text-sm text-cyan-900 dark:text-gray-400`}>
                                 Preview the new Flowbite dashboard navigation! You can turn the new navigation off for a limited time in your
                                 profile.
                             </div>
                             <a
-                                className={`text-sm ${isCTACollapsed ? 'hidden' : ''} text-cyan-900 underline hover:text-cyan-800 dark:text-gray-400 dark:hover:text-gray-300`}
+                                className={`text-sm text-cyan-900 underline hover:text-cyan-800 dark:text-gray-400 dark:hover:text-gray-300`}
                                 href="#"
                             >
                                 Turn new navigation off

@@ -8,7 +8,7 @@ import { FaBookOpen } from 'react-icons/fa';
 import { HiArrowRight, HiX } from 'react-icons/hi';
 import { GetwhoAmI } from "../../features/authSlice";
 
-const SicknessPermit = ({ id_user, id_ijinkhusus }) => {
+const SicknessPermit = ({ id_user }) => {
     const dispatch = useDispatch();
     const [id_level, setId_level] = useState("");
     const [ijinList, setIjinList] = useState([]);

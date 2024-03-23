@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 
 const Login = () => {
     const navigate = useNavigate();
-
+    const [showNotification, setShowNotification] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isEmailValid, setIsEmailValid] = useState(false); // Tambahkan state untuk menandai apakah email valid
@@ -17,6 +17,16 @@ const Login = () => {
     const { user, isError, isSuccess, isLoading, message } = useSelector(
         (state) => state.auth
     );
+
+    useEffect(() => {
+        if (isError) {
+            setShowNotification(true);
+            const timeout = setTimeout(() => {
+                setShowNotification(false);
+            }, 5000);
+            return () => clearTimeout(timeout);
+        }
+    }, [isError]);
 
     useEffect(() => {
         if (user || isSuccess) {
@@ -48,7 +58,6 @@ const Login = () => {
             <div className="flex items-center justify-center h-screen">
                 <Card className="md:w-full md:max-w-md md:p-6 p-3">
                     <form onSubmit={Auth} className="flex flex-col md:gap-4 gap-2">
-                        {isError && <p className="text-center text-red-700">{message}</p>}
                         <div>
                             <div className="mb-2 block">
                                 <Label htmlFor="email1" value="Email" />
@@ -57,7 +66,7 @@ const Login = () => {
                                 value={email} onChange={handleEmailChange} // Gunakan fungsi handleEmailChange
                             />
                         </div>
-                        <div className={`transition-all duration-250 transform ${isEmailValid ? 'scale-100 opacity-100 h-auto' : 'scale-0 opacity-0 h-0'}`}>
+                        <div className={`transition-all duration-100 transform ${isEmailValid ? 'translate-y-0 opacity-100 h-auto' : 'opacity-0 -translate-y-6 h-0'}`}>
                             <div className="mb-2 block">
                                 <Label htmlFor="password1" value="Password" />
                             </div>
@@ -67,6 +76,9 @@ const Login = () => {
                                 }
                             />
                         </div>
+                        {showNotification && isError && (
+                        <p className="text-center text-red-700">{message}</p>
+                    )}
                         {isEmailValid && ( // Tampilkan link "Forget Password" jika email valid
                             <div className="flex justify-end gap-2">
                                 <Link to={"/forget-password"} className="text-red-900 font-medium" >Forget Password</Link>

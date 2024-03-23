@@ -30,7 +30,6 @@ export const GetwhoAmI = createAsyncThunk("user/GetwhoAmI", async (_, thunkAPI) 
         const response = await axios.get("http://localhost:5000/refreshToken");
         const decoded = jwtDecode(response.data.accessToken || ''); // Use an empty string if the token is not defined
         response.data = decoded; // Set response.data to the decoded token data
-        console.log(response.data); // Now response.data is the decoded token data
         return response.data;
     } catch (error) {
         if (error.response) {
